@@ -11,7 +11,7 @@ Un seul dossier : c'est à la fois ton vault Obsidian et le répertoire depuis l
 ```
 <ton second cerveau>/
 ├── .claude/skills/      # skills partagés : Claude Code et OpenCode
-├── .opencode/           # configuration et skills spécifiques à OpenCode
+├── .opencode/           # config OpenCode (instructions, permissions), commandes /… et variantes de skills
 ├── .obsidian/           # config Obsidian (plugins, daily notes, templates)
 ├── 0 INBOX/             # capture rapide
 ├── 1 PROJETS/           # projets actifs
@@ -20,8 +20,8 @@ Un seul dossier : c'est à la fois ton vault Obsidian et le répertoire depuis l
 ├── 4 TOOLS/             # templates et process documentés
 ├── 5 ARCHIVE/           # terminé
 ├── _Import/             # notes à reclasser
-├── AGENTS.md            # instructions d'OpenCode
-└── CLAUDE.md            # instructions de Claude Code
+├── AGENTS.md            # point d'entrée OpenCode : renvoie à CLAUDE.md + correspondance des outils
+└── CLAUDE.md            # les instructions de l'agent (source unique, Claude Code et OpenCode)
 ```
 
 Tu ouvres ce dossier dans Obsidian et tu lances l'agent depuis ce même dossier (`opencode` ou `claude`). Pas de niveau intermédiaire, pas de sous-dossier à ne pas confondre.
@@ -37,7 +37,7 @@ Les skills partagés vivent dans `.claude/skills/`. OpenCode les détecte aussi 
 - **`new-automation`, `connect-mcp`** — étendre l'agent (brancher des outils/MCP, automatiser).
 - **`done`, `thinking-partner`, `research-assistant`, `de-ai-ify`** — clôture de session, réflexion, recherche, nettoyage de style.
 
-Dans Claude Code, ces skills s'invoquent avec `/nom-du-skill`. Dans OpenCode, mentionne `@nom-du-skill` dans ton message (par exemple `@initialisation`).
+Dans Claude Code comme dans OpenCode, ces skills s'invoquent avec `/nom-du-skill` (pour OpenCode, via les commandes de `.opencode/commands/`).
 
 ## Démarrage
 
@@ -53,8 +53,8 @@ Dans Claude Code, ces skills s'invoquent avec `/nom-du-skill`. Dans OpenCode, me
 2. Ouvre **ce dossier** comme vault dans **Obsidian**.
 3. Active les plugins communautaires (désactive le mode restreint), puis installe **Lean Terminal**, **Excalidraw** et **Hidden Folders Access**. Calendar et le patch Lean Terminal Escape Fix sont déjà fournis.
 4. Ouvre un terminal (Lean Terminal dans Obsidian, ou ton terminal habituel dans ce dossier) et lance **`opencode`** ou **`claude`**.
-5. Avec OpenCode, lance le skill en mentionnant **`@initialisation`** dans ton message ; avec Claude Code, utilise **`/initialisation`**.
-6. Dépose ta matière (veille, notes, docs de rôle) dans `0 INBOX/`, puis lance `@inbox-processor` dans OpenCode ou `/inbox-processor` dans Claude Code.
+5. Lance **`/initialisation`** : l'agent te pose quelques questions et personnalise le vault.
+6. Dépose ta matière (veille, notes, docs de rôle) dans `0 INBOX/`, puis lance **`/inbox-processor`**.
 
 Le repo est un **template** : après le clone, c'est ton vault. Tu n'as pas besoin de compte GitHub pour t'en servir (git local suffit).
 
@@ -70,5 +70,5 @@ Le repo est un **template** : après le clone, c'est ton vault. Tu n'as pas beso
 ## Notes
 
 - Structure **à plat** assumée : le vault et le répertoire de travail de l'agent sont le même dossier. La variante imbriquée (un WORKSPACE parent pouvant héberger d'autres projets à côté du vault) est conservée sur la branche `structure-imbriquee`.
-- Les instructions sont dans `CLAUDE.md` pour Claude Code et `AGENTS.md` pour OpenCode V2 (`CLAUDE.md` n'est pas chargé automatiquement par OpenCode).
-- `.claude/settings.json` règle les permissions de Claude Code. Les permissions OpenCode sont configurées séparément dans `.opencode/opencode.json`.
+- Les instructions de l'agent sont dans un **unique `CLAUDE.md`** à la racine. OpenCode le charge via `"instructions": ["CLAUDE.md"]` dans `.opencode/opencode.json` ; `AGENTS.md` n'y ajoute que la correspondance des outils Claude Code → OpenCode.
+- `.claude/settings.json` (Claude Code) et `.opencode/opencode.json` (OpenCode) appliquent les mêmes garde-fous : actions courantes sans confirmation, `rm`, `git push`, `git reset --hard` et lecture des `.env` bloqués.

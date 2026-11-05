@@ -94,7 +94,7 @@ Si Firecrawl est indisponible, utilise les outils de recherche web disponibles d
 ```
 On a collecté ta méthode. Qu'est-ce qu'on produit ?
 
-- **Skill seul** : fichier `.claude/skills/[nom]/SKILL.md`. Claude Code l'exécute avec `/<nom>` ; dans OpenCode, l'utilisateur peut le demander avec `@[nom]`.
+- **Skill seul** : fichier `.claude/skills/[nom]/SKILL.md` (+ sa commande OpenCode `.opencode/commands/[nom].md`). L'IA peut l'exécuter avec /[nom], dans Claude Code comme dans OpenCode
 - **Fiche seule** : `4 TOOLS/Process/Process - [Nom].md`. Référence humaine lisible, pas d'exécution IA
 
 Lequel ?
@@ -116,7 +116,7 @@ Si le nom proposé est invalide, propose une version corrigée (ex : « Post Lin
 
 En cas de collision, propose une alternative explicite plutôt qu'une troncature : `init` → `initialisation`, `review` → `revue-hebdo`, `context` → `contexte-projet`.
 
-**c. Collision avec un skill existant.** Vérifie que `.claude/skills/[nom]/` et `.opencode/skills/[nom]/` n'existent pas déjà. Si un skill de même identifiant existe, demande à l'utilisateur s'il veut modifier l'existant ou en créer un nouveau sous un autre nom. Ne l'écrase jamais sans poser la question.
+**c. Collision avec un skill existant.** Vérifie que `.claude/skills/[nom]/`, `.opencode/skills/[nom]/` et `.opencode/commands/[nom].md` n'existent pas déjà. Si un skill de même identifiant existe, demande à l'utilisateur s'il veut modifier l'existant ou en créer un nouveau sous un autre nom. Ne l'écrase jamais sans poser la question.
 
 ### Étape 7 : Génération
 
@@ -176,6 +176,22 @@ description: [1-1024 chars. Spécifique, pour que l'agent sache QUAND déclenche
 - [Anti-pattern 1]
 - [Anti-pattern 2]
 ```
+
+#### Commande OpenCode associée (obligatoire pour tout skill)
+
+Pour que `/[nom]` fonctionne aussi dans OpenCode, crée `.opencode/commands/[nom].md` :
+
+```markdown
+---
+description: [description courte du skill]
+---
+
+Charge le skill `[nom]` avec l'outil `skill` et applique ses instructions jusqu'au bout.
+
+Arguments de l'utilisateur : $ARGUMENTS
+```
+
+OpenCode recharge commandes et skills automatiquement : pas besoin de le relancer. Claude Code, lui, ignore ce fichier.
 
 #### Si fiche
 
@@ -271,7 +287,7 @@ Si l'utilisateur accepte, lance une exécution test avec un input qu'il te donne
 
 - Créer un skill sans exemples concrets (Étape 3 obligatoire)
 - Générer un skill « bonnes pratiques internet » sans la méthode de l'utilisateur
-- Pour un skill partagé, créer dans `.claude/skills/[nom]/SKILL.md` ; OpenCode détecte aussi cet emplacement. N'utiliser `.opencode/skills/` que pour un skill OpenCode spécifique ou une variante propre à OpenCode.
+- Créer ailleurs que dans `.claude/skills/[nom]/SKILL.md` (emplacement lu par Claude Code et OpenCode), ou oublier la commande `.opencode/commands/[nom].md`
 - Oublier les wikilinks croisés fiche ↔ skill
 - Lancer Firecrawl de toi-même : seulement si l'utilisateur cite explicitement une méthode externe
 - Écrire la frontmatter avec `allowed-tools` (non reconnu pour les skills, sera ignoré)

@@ -1,133 +1,172 @@
 # Installation pas à pas avec OpenCode (Windows)
 
-Ce guide configure le vault avec **OpenCode**, sans installer ni lancer Claude Code. Le guide [`INSTALL-WINDOWS.md`](INSTALL-WINDOWS.md) reste disponible pour ceux qui souhaitent utiliser Claude Code.
+De zéro jusqu'à ton second cerveau opérationnel, avec **OpenCode** à la place de Claude Code. Le guide [`INSTALL-WINDOWS.md`](INSTALL-WINDOWS.md) reste disponible pour Claude Code. Les deux agents partagent le même vault, les mêmes skills et les mêmes instructions (`CLAUDE.md`).
 
-> OpenCode est l'agent utilisé ici. Tu peux choisir le fournisseur et le modèle dans OpenCode ; un abonnement Claude n'est pas requis. Les frais et modalités dépendent du fournisseur choisi.
+> Pas besoin d'abonnement Claude : tu choisis ton fournisseur et ton modèle dans OpenCode. Les coûts dépendent du fournisseur.
 
-## 0. Prérequis
+| Phase | Qui fait | Quoi |
+|---|---|---|
+| 0-2 | toi | Git, OpenCode, connexion d'un fournisseur |
+| 3 | toi ou l'agent | Obsidian, Node, le vault |
+| 4 | toi | Obsidian : ouvrir le coffre et ses plugins |
+| 5-10 | vous deux | L'agent prend le relais |
 
-- Droits permettant d'installer des logiciels et d'ajouter un dossier au PATH utilisateur.
-- Git, pour cloner le vault et enregistrer les changements.
-- Obsidian, pour consulter et modifier le vault.
-- Node.js LTS, seulement nécessaire aux MCP installés avec `npx`, comme Firecrawl.
-- Une méthode d'authentification auprès d'un fournisseur pris en charge par OpenCode (clé API ou authentification proposée par le fournisseur).
+---
 
-Ouvre **PowerShell** (pas PowerShell ISE ni `cmd.exe`).
+## Phase 0 - Avant de commencer
 
-## 1. Git et le vault
+- [ ] Un compte chez un fournisseur de modèles pris en charge par OpenCode (clé API ou abonnement compatible)
+- [ ] Droits d'installation de logiciels (pas besoin d'être administrateur)
+- [ ] Ta matière prête dans un dossier
 
-Vérifie Git :
+**Ouvrir PowerShell :** touche Windows, taper `powershell`, Entrée.
 
-```powershell
-git --version
-```
+---
 
-Le dépôt de ce guide est `https://github.com/lraulet/second-cerveau.git`. Le guide Claude d'origine clone une autre URL ; ne reprends pas cette URL pour installer ce vault.
+## Phase 1 - Git
 
-Si tu as déjà cloné ce dépôt, réutilise ce dossier et ne le clone pas une seconde fois. Sinon :
+Identique à la Phase 1 de [`INSTALL-WINDOWS.md`](INSTALL-WINDOWS.md) (téléchargement direct sur https://git-scm.com/download/win, éditeur **Notepad**, branche initiale **main**).
 
-```powershell
-git clone https://github.com/lraulet/second-cerveau.git "$HOME\Documents\Second Cerveau"
-```
+- [ ] Vérif : `git --version` renvoie un numéro de version
 
-Le dossier cloné est à la fois le coffre Obsidian et le répertoire de travail d'OpenCode.
+---
 
-## 2. Installer OpenCode
+## Phase 2 - OpenCode
 
-### Option recommandée : CLI dans le terminal d'Obsidian
+### 2.1 Installation
 
-1. Depuis la [documentation officielle OpenCode V2](https://opencode.ai/v2/docs/), télécharge l'archive CLI Windows correspondant à l'architecture de la machine (x64 pour la plupart des PC, ARM64 pour les PC ARM).
-2. Décompresse `opencode.exe` dans un dossier utilisateur, par exemple `%LOCALAPPDATA%\Programs\OpenCode`.
-3. Ajoute ce dossier au **PATH utilisateur** dans les variables d'environnement Windows, puis ferme et rouvre PowerShell.
-4. Vérifie :
+1. Télécharge l'archive CLI Windows depuis la [documentation OpenCode V2](https://opencode.ai/v2/docs/) (**x64** pour la plupart des PC, **ARM64** pour les PC ARM).
+2. Décompresse `opencode.exe` dans `%LOCALAPPDATA%\Programs\OpenCode`.
+3. Ajoute ce dossier au PATH utilisateur (pas besoin d'administrateur) :
 
 ```powershell
-opencode --version
+[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path","User") + ";$env:LOCALAPPDATA\Programs\OpenCode", "User")
 ```
 
-L'application [OpenCode Desktop](https://opencode.ai/v2/docs/) est également disponible pour Windows. Si tu l'utilises, ouvre le dossier du vault comme projet.
+- [ ] **Ferme et rouvre PowerShell**
+- [ ] Vérif : `opencode --version` renvoie un numéro de version
 
-> Le guide V2 propose un binaire Windows autonome. Ne suis pas la Phase 2 de `INSTALL-WINDOWS.md` : elle installe Claude Code et configure `cc` pour le lancer.
+> Alternative : l'application **OpenCode Desktop** pour Windows (même page). Ouvre alors le dossier du vault comme projet.
 
-## 3. Installer Obsidian et Node.js
-
-Si ces applications ne sont pas déjà installées :
-
-1. Installe Obsidian depuis [obsidian.md](https://obsidian.md).
-2. Installe la version LTS de Node.js depuis [nodejs.org](https://nodejs.org), nécessaire aux MCP qui utilisent `npx`.
-
-Ferme et rouvre PowerShell, puis vérifie si tu comptes utiliser Firecrawl :
-
-```powershell
-node --version
-npx --version
-```
-
-## 4. Ouvrir le vault dans Obsidian
-
-Dans Obsidian, choisis **Ouvrir un dossier comme coffre** et sélectionne le dossier du dépôt. Dans l'explorateur, tu dois voir notamment `0 INBOX`, `1 PROJETS`, `2 CASQUETTES` et `4 TOOLS`. Les fichiers d'instructions des agents peuvent être masqués dans l'explorateur Obsidian.
-
-Active les plugins communautaires si nécessaire, puis installe et active :
-
-- **Lean Terminal** (LeanProductivity), pour ouvrir OpenCode depuis le vault ;
-- **Excalidraw**, pour les schémas ;
-- **Hidden Folders Access**, si tu veux consulter ou modifier les skills, qui sont dans des dossiers cachés.
-
-Calendar et le patch `Lean Terminal - Escape Fix` sont fournis dans le dépôt. Le patch Escape Fix concerne le comportement d'interruption de Claude Code ; il n'est pas requis par OpenCode.
-
-Dans les réglages de Lean Terminal, sélectionne `powershell.exe` comme shell Windows. Ouvre ensuite un terminal intégré et vérifie que son dossier courant est la racine du vault :
-
-```powershell
-Get-Location
-Get-ChildItem
-```
-
-## 5. Connecter un fournisseur et démarrer OpenCode
-
-Depuis le terminal intégré, à la racine du vault :
+### 2.2 Connexion à un fournisseur
 
 ```powershell
 opencode
 ```
 
-Dans OpenCode :
+Dans OpenCode : `/connect`, choisis ton fournisseur et suis l'authentification, puis `/models` pour choisir le modèle.
 
-1. Lance `/connect`, choisis un fournisseur et suis son processus d'authentification.
-2. Lance `/models` et sélectionne un modèle disponible.
-3. Vérifie qu'OpenCode a ouvert le bon projet. Le fichier `AGENTS.md` à la racine contient ses instructions pour ce vault.
+- [ ] Fournisseur connecté, modèle choisi
+- [ ] Quitter (`Ctrl+C`)
 
-OpenCode n'utilise pas `CLAUDE.md` comme fichier d'instructions V2. Les deux fichiers peuvent coexister : `CLAUDE.md` reste en place pour Claude Code et `AGENTS.md` fournit les consignes à OpenCode.
+### 2.3 Pas de raccourci `cc` nécessaire
 
-## 6. Utiliser les skills du vault
+Avec Claude Code, `cc` servait à supprimer les demandes de confirmation. OpenCode fonctionne déjà ainsi pour ce vault : `.opencode/opencode.json` autorise les actions courantes sans question et **bloque** `rm`, `Remove-Item`, `del`, `git push`, `git reset --hard` et la lecture des `.env`, comme `.claude/settings.json` le faisait pour Claude Code. Tu lances simplement `opencode`.
 
-Les skills existants sont dans `.claude/skills/`. OpenCode les détecte aussi depuis cet emplacement de compatibilité ; le dossier n'a pas besoin d'être déplacé. Pour en lancer un, demande-le dans ton message avec son identifiant, par exemple :
+---
 
-```text
-@initialisation
+## Phase 3 - Obsidian, Node, et le vault
+
+### 3.1 Obsidian et Node
+
+1. **Obsidian** : https://obsidian.md → « Download for Windows ». N'ouvre pas encore Obsidian.
+2. **Node.js LTS** : https://nodejs.org (requis pour les MCP lancés via `npx`, dont Firecrawl).
+
+### 3.2 Le vault
+
+```powershell
+git clone https://github.com/lraulet/second-cerveau.git "$HOME\Documents\Second Cerveau"
 ```
 
-Autres exemples : `@inbox-processor`, `@daily-review`, `@weekly-review`, `@create-skill` et `@done`. Pour un skill qui attend un sujet ou un nom, ajoute l'information dans le même message.
+> Pour utiliser la version adaptée à OpenCode tant qu'elle n'est pas fusionnée dans `main`, ajoute `-b opencode` à la commande.
 
-Les consignes communes sont dans `AGENTS.md`. `.claude/settings.json` et `.claude/statusline.js` sont propres à Claude Code et ne configurent pas OpenCode. Les permissions OpenCode sont dans `.opencode/opencode.json` : les commandes shell demandent confirmation sauf quelques commandes Git courantes, les commandes de suppression et `git push` sont bloquées, et la lecture des fichiers `.env` est refusée. En particulier, la barre Claude affiche des quotas Claude Pro/Max qui ne sont pas disponibles dans cette configuration OpenCode.
+Ou laisse l'agent le faire : lance `opencode` dans `Documents` et colle :
 
-## 7. (Facultatif) Connecter Firecrawl comme MCP
+```
+Clone le vault : git clone https://github.com/lraulet/second-cerveau.git "$HOME/Documents/Second Cerveau"
+Vérifie qu'il contient 0 INBOX, 1 PROJETS, CLAUDE.md, AGENTS.md, .claude/skills (14 skills)
+et .opencode/commands (14 commandes). Obsidian et Node sont déjà installés : ne les
+réinstalle pas. Termine par un récapitulatif franc de ce qui a marché ou échoué.
+```
 
-Firecrawl est facultatif. Pour les pages web, il faut une clé API Firecrawl et Node.js. Ne colle pas la clé dans un fichier versionné.
+- [ ] **Fermer et rouvrir PowerShell**, puis vérif : `node --version`
 
-1. Crée une clé sur [firecrawl.dev](https://firecrawl.dev).
-2. Dans PowerShell, enregistre-la pour ton compte Windows (remplace la valeur d'exemple) :
+---
+
+## Phase 4 - Obsidian et ses plugins
+
+Identique à la Phase 4 de [`INSTALL-WINDOWS.md`](INSTALL-WINDOWS.md) : ouvrir le dossier `Second Cerveau` comme coffre, désactiver le mode restreint, installer **Lean Terminal**, **Excalidraw**, **Hidden Folders Access**, et régler le shell de Lean Terminal sur `powershell.exe`.
+
+- [ ] Dans le terminal d'Obsidian, `dir` liste `0 INBOX`, `1 PROJETS`, `CLAUDE.md`, `AGENTS.md`...
+
+> Le plugin fourni **Lean Terminal - Escape Fix** peut rester activé : il laisse la touche Échap au terminal intégré.
+
+---
+
+## Phase 5 - Lancer l'agent
+
+Dans le terminal d'Obsidian :
+
+```powershell
+opencode
+```
+
+- [ ] OpenCode démarre dans le vault
+- [ ] Vérif : taper `/` et voir `initialisation`, `create-skill`, `done`, `connect-mcp` dans la liste
+
+**Instructions :** OpenCode charge `AGENTS.md` et, via la config du projet, `CLAUDE.md`. C'est le même fichier d'instructions que pour Claude Code : une seule source.
+
+**Contexte :** la barre de statut Claude (`.claude/statusline.js`) n'est pas utilisée par OpenCode, qui a sa propre interface. Pas de quotas `5h`/`7j` (spécifiques à l'abonnement Claude).
+
+> **Règle à retenir :** au-delà de 40 % de contexte utilisé, lance `/done` et ouvre une nouvelle session.
+
+---
+
+## Phase 6 - Initialisation du vault
+
+```
+/initialisation
+```
+
+- [ ] Conversation terminée
+- [ ] Vérif : tes notes de contexte sont créées, et `CLAUDE.md` contient le nom de ton IA et ton prénom
+
+> Attention : `/initialisation`, pas `/init`.
+
+---
+
+## Phase 7 - Ta matière
+
+- [ ] Copier tes fichiers dans `0 INBOX\`, puis :
+
+```
+/inbox-processor
+```
+
+---
+
+## Phase 8 - Firecrawl
+
+### 8.1 Clé API
+
+Compte gratuit sur https://firecrawl.dev, clé commençant par `fc-`.
+
+### 8.2 Brancher le connecteur
+
+Le plus simple, dans OpenCode :
+
+```
+/connect-mcp firecrawl
+```
+
+À la main : enregistre la clé dans ton environnement utilisateur (elle ne finit jamais dans le dépôt) :
 
 ```powershell
 [Environment]::SetEnvironmentVariable("FIRECRAWL_API_KEY", "fc-ta-cle", "User")
-```
-
-Ferme et rouvre le terminal. Si le service OpenCode était déjà lancé avant l'ajout de la variable, redémarre-le :
-
-```powershell
 opencode service restart
 ```
 
-3. Crée ou complète `.opencode/opencode.json` à la racine du vault avec cette configuration. Si le fichier existe, conserve ses autres réglages et fusionne seulement l'entrée `firecrawl` :
+Puis ajoute dans ta config globale `%USERPROFILE%\.config\opencode\opencode.json` (crée-la si besoin, conserve ses autres réglages) :
 
 ```json
 {
@@ -137,39 +176,54 @@ opencode service restart
       "firecrawl": {
         "type": "local",
         "command": ["npx", "-y", "firecrawl-mcp"],
-        "environment": {
-          "FIRECRAWL_API_KEY": "{env:FIRECRAWL_API_KEY}"
-        }
+        "environment": { "FIRECRAWL_API_KEY": "{env:FIRECRAWL_API_KEY}" }
       }
     }
   }
 }
 ```
 
-4. Vérifie la connexion avec `opencode mcp list`. Dans la TUI, `/mcps` permet aussi de vérifier les serveurs et leurs outils. La configuration MCP d'OpenCode est distincte de celle de Claude : ne lance pas `claude mcp add`.
+- [ ] Vérif : `opencode mcp list` affiche `firecrawl` connecté (ou `/mcps` dans OpenCode)
+- [ ] Vérif : demander de scraper une page publique et de la résumer
 
-## 8. Vérifier le démarrage
+> Pas besoin de relancer OpenCode après une modification de config. Seul l'ajout d'une **variable d'environnement** demande `opencode service restart`.
 
-Dans OpenCode, essaie `@initialisation`. L'agent devrait lire les instructions de `AGENTS.md` et pouvoir charger le skill. Tu peux ensuite déposer des fichiers dans `0 INBOX` et demander `@inbox-processor`.
+---
 
-Pour terminer une session de travail sur le vault, `@done` propose le flux documenté dans son skill. Vérifie les changements Git avant de les enregistrer :
+## Phase 9 - Ton premier skill
 
-```powershell
-git status
-git diff
+Identique à la Phase 9 de [`INSTALL-WINDOWS.md`](INSTALL-WINDOWS.md), avec `/create-skill`. Le skill est écrit dans `.claude\skills\<nom>\SKILL.md` et sa commande dans `.opencode\commands\<nom>.md`. Pas besoin de relancer : tape directement `/<nom-du-skill>`.
+
+---
+
+## Phase 10 - Clôturer
+
+```
+/done
 ```
 
 ---
 
-## Dépannage
+## Dépannage rapide
 
-| Symptôme | Vérification |
+| Symptôme | Correctif |
 |---|---|
-| `opencode` n'est pas reconnu | Vérifie le dossier contenant `opencode.exe` dans le PATH utilisateur, puis rouvre PowerShell. |
-| L'agent ne voit pas le vault | Lance OpenCode depuis la racine du coffre et vérifie avec `Get-Location`. |
-| `AGENTS.md` n'est pas pris en compte | Vérifie qu'il est à la racine du projet ouvert dans OpenCode. |
-| Un skill n'est pas proposé | Vérifie que le fichier est dans `.claude/skills/<id>/SKILL.md` et contient une description en frontmatter ; mentionne `@<id>` dans ta demande. |
-| Firecrawl n'apparaît pas | Vérifie la variable `FIRECRAWL_API_KEY`, la configuration `.opencode/opencode.json` et `opencode mcp list`. |
-| Les quotas `5h`/`7j` ne s'affichent pas | Ils sont spécifiques à la barre Claude du dépôt, pas à OpenCode. |
+| `opencode` non reconnu | Rouvrir le terminal ; vérifier `Test-Path "$env:LOCALAPPDATA\Programs\OpenCode\opencode.exe"` et le PATH (Phase 2.1) |
+| Aucune commande `/initialisation` | OpenCode lancé hors du vault : `dir` doit montrer `CLAUDE.md` et `.opencode` |
+| L'agent ignore les règles du vault | Vérifier que `.opencode/opencode.json` contient `"instructions": ["CLAUDE.md"]` |
+| Aucun modèle disponible | `/connect` puis `/models` |
+| Firecrawl absent | `opencode mcp list` ; si la clé vient d'être ajoutée, `opencode service restart` |
+| L'agent part en vrille | Contexte saturé : `/done` puis nouvelle session |
 
-Documentation : [installation et CLI](https://opencode.ai/v2/docs/), [skills](https://opencode.ai/v2/docs/skills/), [instructions](https://opencode.ai/v2/docs/instructions/), [MCP](https://opencode.ai/v2/docs/mcp-servers/) et [permissions](https://opencode.ai/v2/docs/permissions/).
+## Mémo des commandes
+
+| Commande | Quand |
+|---|---|
+| `opencode` | Lancer l'agent, depuis le terminal d'Obsidian |
+| `/initialisation` | Une seule fois, au démarrage |
+| `/inbox-processor` | Après dépôt dans `0 INBOX` |
+| `/create-skill` | Transformer un process en commande |
+| `/connect-mcp <outil>` | Brancher un outil externe |
+| `/daily-review`, `/weekly-review` | Journaling et bilans |
+| `/done` | Fin de session, toujours |
+| `/connect`, `/models`, `/mcps` | Fournisseur, modèle, connecteurs |
