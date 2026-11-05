@@ -7,6 +7,10 @@ description: Initialiser le vault via conversation guidée. Pédagogie IPCRA, d�
 
 Tu initialises ce vault avec les informations de l'utilisateur via une conversation guidée. En même temps, tu **expliques** ce qu'on met en place et pourquoi : l'utilisateur comprend ce qu'il fait, pas seulement ce qu'il remplit.
 
+## Compatibilité des fichiers d'instructions
+
+Choisis le fichier selon l'agent qui exécute ce skill : **Claude Code utilise `CLAUDE.md` ; OpenCode utilise `AGENTS.md`**. Dans toutes les étapes ci-dessous qui parlent de `CLAUDE.md`, remplace-le par `AGENTS.md` lorsque tu es dans OpenCode. Ne modifie que le fichier correspondant à l'agent courant ; conserve l'autre pour l'autre agent.
+
 ## Règle transversale : dépôt de documents
 
 **À tout moment** pendant les étapes de décharge (Étapes 3 à 7), l'utilisateur peut déposer des fichiers pour compléter ou remplacer la réponse vocale/écrite : CV, bios historiques, notes de parcours, offres écrites, briefs clients, archives de réunions, journal intime, anciens coachings, etc.
@@ -26,7 +30,7 @@ Quand un fichier est déposé :
 On écrit chaque note à la **fin de son étape**, pas tout à la fin. Ça garde une fidélité maximale : on écrit depuis la décharge fraîche et brute de chaque section, pas depuis un recap compressé 30-40 minutes plus tard (au risque d'oublier des choses).
 
 - Les artefacts self-contained (`Mon Parcours.md`, `Moi.md`, les notes de Casquette, les notes de Projet, la Phase de vie) sont écrits à la fin de leur étape, juste après la décharge + validation de cette étape. `Moi.md` est écrit en deux temps : le gros à la fin de l'Étape 4 (Qui tu es + Vision), complété à la fin de l'Étape 8 (style IA, valeurs, rythme).
-- Le patch du `CLAUDE.md` (nom de l'IA + prénom) est appliqué dès l'Étape 2.
+- Le patch du fichier d'instructions de l'agent (nom de l'IA + prénom) est appliqué dès l'Étape 2.
 - Les artefacts transversaux (daily note d'initialisation, configs Obsidian) sont générés à la fin, pendant la passe de relecture (Étape 12), parce qu'ils agrègent ou dépendent de plusieurs sections.
 
 Chaque étape de décharge se clôt sur une sous-étape « Écrire ». Annonce-le : « Maintenant j'écris [fichier] avec ce qu'on vient de capturer. Voilà ce que je mets dedans. » Écris, puis demande une validation rapide avant de passer à l'étape suivante. Le format exact de chaque fichier reste défini à l'Étape 12 (blocs de référence).
@@ -126,19 +130,19 @@ Attends une confirmation ou une question. Réponds aux questions. Puis enchaîne
 
 Une fois les deux noms recueillis :
 - Le **prénom** de l'utilisateur sera stocké dans `2 CASQUETTES/Sur ma vie/Moi.md` (Étape 12)
-- Le **nom de l'IA** sera stocké dans le **`CLAUDE.md` à la racine du vault** : c'est l'identité de l'IA, valable dans toutes les interactions
+- Le **nom de l'IA** sera stocké dans le fichier d'instructions de l'agent à la racine du vault (`CLAUDE.md` pour Claude Code, `AGENTS.md` pour OpenCode) : c'est l'identité de l'IA, valable dans toutes les interactions
 
-### Écrire : patcher le CLAUDE.md
+### Écrire : patcher le fichier d'instructions de l'agent
 
-Dès maintenant, patche le nom de l'IA et le prénom dans le `CLAUDE.md` (détail complet à l'Étape 12.1) :
+Dès maintenant, patche le nom de l'IA et le prénom dans le fichier correspondant à l'agent courant (`CLAUDE.md` sous Claude Code, `AGENTS.md` sous OpenCode ; détail complet à l'Étape 12.1) :
 
-Utilise l'outil **Edit** (pas `sed`) sur `CLAUDE.md` à la racine, avec `replace_all` :
+Utilise l'outil d'édition de fichiers de l'agent (pas `sed`) sur le fichier choisi à la racine, avec remplacement de toutes les occurrences :
 - `[Nom IA]` → le nom choisi
 - `[Prénom]` → le prénom recueilli
 
 > N'utilise jamais `sed -i` ici : la syntaxe diffère entre macOS (BSD) et Windows/Linux (GNU), et le skill doit marcher sur les deux. L'outil Edit est portable.
 
-Dis à l'utilisateur : « J'ai enregistré ton prénom et le nom de l'IA (« [Nom IA] ») dans CLAUDE.md. À partir de maintenant je me réfère à moi sous ce nom. » Puis passe à l'Étape 3.
+Dis à l'utilisateur : « J'ai enregistré ton prénom et le nom de l'IA (« [Nom IA] ») dans le fichier d'instructions de l'agent. À partir de maintenant je me réfère à moi sous ce nom. » Puis passe à l'Étape 3.
 
 ---
 
@@ -200,7 +204,7 @@ Maintenant crée `2 CASQUETTES/Sur ma vie/Moi.md` (format complet à l'Étape 12
 - Depuis l'Étape 3 : **Prénom**, **Qui je suis** (2-3 phrases), **Forces**, **Faiblesses**, **Passions**, **MBTI**.
 - Depuis l'Étape 4 : **Vision long-terme** (12 mois + 5 ans) et **Actions essentielles quotidiennes**.
 
-Laisse en attente les sections **Style de communication IA**, **Valeurs et principes** et **Comment je travaille** : elles seront complétées à la fin de l'Étape 8 (mets un court `_(à compléter Étape 8)_` en placeholder). Conserve la frontmatter (`type: context, status: active`). Ne mets jamais le nom de l'IA dans `Moi.md` (il va dans `CLAUDE.md`).
+Laisse en attente les sections **Style de communication IA**, **Valeurs et principes** et **Comment je travaille** : elles seront complétées à la fin de l'Étape 8 (mets un court `_(à compléter Étape 8)_` en placeholder). Conserve la frontmatter (`type: context, status: active`). Ne mets jamais le nom de l'IA dans `Moi.md` (il va dans le fichier d'instructions de l'agent courant).
 
 Dis à l'utilisateur : « J'ai écrit Moi.md avec qui tu es et ta vision. Quick check : ça matche ? » Applique les corrections, puis passe à l'Étape 5.
 
@@ -410,7 +414,7 @@ Continue jusqu'à avoir une compréhension complète.
 ```
 Voici l'état du vault (déjà écrit au fil des étapes) + ce qu'il reste à générer :
 
-- CLAUDE.md                                 <- ajout du nom de l'IA « [Nom IA] » + prénom
+- Fichier d'instructions de l'agent (`CLAUDE.md` ou `AGENTS.md`) <- ajout du nom de l'IA « [Nom IA] » + prénom
 - 2 CASQUETTES/Sur ma vie/Moi.md          <- qui tu es, style IA, valeurs, vision
 - 2 CASQUETTES/Sur ma vie/Mon Parcours.md <- historique chronologique
 
@@ -438,21 +442,21 @@ Confirmes-tu ? (oui / ajustements)
 
 ## Étape 12 : Passe de relecture & génération des artefacts transversaux
 
-À ce stade, les artefacts self-contained ont déjà été écrits au fur et à mesure : le patch du `CLAUDE.md` (Étape 2), `Mon Parcours.md` (Étape 3), `Moi.md` (Étapes 4 + 8), les casquettes (Étape 5), les projets (Étape 6), la phase de vie (Étape 7). Cette étape est le **relecteur** :
+À ce stade, les artefacts self-contained ont déjà été écrits au fur et à mesure : le patch du fichier d'instructions de l'agent (Étape 2), `Mon Parcours.md` (Étape 3), `Moi.md` (Étapes 4 + 8), les casquettes (Étape 5), les projets (Étape 6), la phase de vie (Étape 7). Cette étape est le **relecteur** :
 
 1. **Relis** tout ce qui a été écrit (Moi.md, Mon Parcours.md, chaque casquette, chaque projet, l'intention de phase) et vérifie la cohérence transversale : chaque projet est-il rattaché à une casquette ? une casquette « Business » a-t-elle bien été créée si une activité indépendante existe ? la phase de vie s'aligne-t-elle avec la vision ? Signale et corrige les mismatches directement.
 2. **Génère les artefacts transversaux** qui dépendent de plusieurs sections : la daily note d'initialisation (12.8) et les configs Obsidian (12.7, qui ont besoin du nom de phase figé).
 
 Les blocs 12.1 à 12.8 ci-dessous restent la **référence du format** de chaque fichier (invoquée par les sous-étapes « Écrire » des Étapes 2 à 8). Ne réécris pas un fichier déjà écrit et validé, sauf pour appliquer une correction de cohérence.
 
-### 12.1 : Nom de l'IA et prénom dans le CLAUDE.md
+### 12.1 : Nom de l'IA et prénom dans le fichier d'instructions de l'agent
 
 Remplace partout les placeholders `[Nom IA]` et `[Prénom]` par les vraies valeurs recueillies à l'Étape 2.
 
 Fichier à patcher :
-- `CLAUDE.md` à la racine du vault
+- `CLAUDE.md` à la racine sous Claude Code, ou `AGENTS.md` sous OpenCode
 
-Utilise l'outil **Edit** avec `replace_all` (jamais `sed -i` : la syntaxe diffère entre macOS et Windows/Linux) :
+Utilise l'outil d'édition de fichiers disponible dans l'agent avec remplacement de toutes les occurrences (jamais `sed -i` : la syntaxe diffère entre macOS et Windows/Linux) :
 - `[Nom IA]` → le nom choisi
 - `[Prénom]` → le prénom recueilli
 
@@ -591,7 +595,7 @@ Crée `2 CASQUETTES/Sur ma vie/Life Phases/1 [Nom]/[YYYY-MM-DD].md` à partir du
 **Accompli :**
 - Vault initialisé via `/initialisation`
 - Création de `Moi.md`, `Mon Parcours.md`, casquettes, projets, phase « [Nom] »
-- Nom de l'IA enregistré dans `CLAUDE.md` : « [Nom IA] »
+- Nom de l'IA enregistré dans le fichier d'instructions de l'agent : « [Nom IA] »
 
 **Extractions :**
 - Préférences : prénom « [Prénom] », nom IA « [Nom IA] », style de communication défini
@@ -612,7 +616,7 @@ Crée `2 CASQUETTES/Sur ma vie/Life Phases/1 [Nom]/[YYYY-MM-DD].md` à partir du
 Initialisation terminée !
 
 Créé dans ton vault :
-- CLAUDE.md                                      -> nom de l'IA : [Nom] + prénom
+- Fichier d'instructions de l'agent (`CLAUDE.md` ou `AGENTS.md`) -> nom de l'IA : [Nom] + prénom
 - 2 CASQUETTES/Sur ma vie/Moi.md                 -> qui tu es, style IA, valeurs
 - 2 CASQUETTES/Sur ma vie/Mon Parcours.md        -> historique chronologique
 - [X] casquettes dans 2 CASQUETTES/
@@ -646,7 +650,7 @@ Redémarre Obsidian pour activer les configs de daily/weekly notes.
 - Tenir toute la décharge en mémoire et tout écrire à la fin : écris chaque artefact à la fin de son étape
 - Sauter le prélude pédagogique (Étape 1) : l'utilisateur doit comprendre ce qu'il fait
 - Créer les fichiers sans validation finale
-- Mettre le nom de l'IA dans `Moi.md` (il va dans `CLAUDE.md`)
+- Mettre le nom de l'IA dans `Moi.md` (il va dans le fichier d'instructions de l'agent courant)
 - Traiter la casquette « Business » comme une section de `Moi.md` (elle mérite son propre dossier dans `2 CASQUETTES/[Nom du business]/`)
 - Hardcoder les chemins Life Phases : c'est toujours `2 CASQUETTES/Sur ma vie/Life Phases/`
 - Oublier de mettre à jour les configs Obsidian (Étape 12.7)

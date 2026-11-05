@@ -80,21 +80,21 @@ Tu t'inspires d'une méthode connue ? (AIDA, GTD, 5 Whys, un copywriter, un livr
 - Si non → on skip, ta méthode à toi suffit.
 ```
 
-Si l'utilisateur cite une méthode et que Firecrawl (`mcp__firecrawl-mcp__firecrawl_search` + `mcp__firecrawl-mcp__firecrawl_scrape`) est disponible :
+Si l'utilisateur cite une méthode et que les outils de recherche et de scraping Firecrawl sont disponibles dans l'agent courant (leurs noms varient selon l'agent) :
 
 1. Recherche la méthode (3-5 résultats)
 2. Scrape les 1-2 sources les plus autoritaires
 3. Extrais 3-5 points clés à embarquer dans le skill
 4. **Cite la source** (URL)
 
-Si Firecrawl indisponible : demande à l'utilisateur s'il veut coller un résumé de la méthode.
+Si Firecrawl est indisponible, utilise les outils de recherche web disponibles dans l'agent. Si aucun outil de recherche n'est disponible, demande à l'utilisateur s'il veut coller un résumé de la méthode.
 
 ### Étape 5 : Décider des artefacts
 
 ```
 On a collecté ta méthode. Qu'est-ce qu'on produit ?
 
-- **Skill seul** : fichier `.claude/skills/[nom]/SKILL.md`. L'IA peut l'exécuter avec /[nom]
+- **Skill seul** : fichier `.claude/skills/[nom]/SKILL.md`. Claude Code l'exécute avec `/<nom>` ; dans OpenCode, l'utilisateur peut le demander avec `@[nom]`.
 - **Fiche seule** : `4 TOOLS/Process/Process - [Nom].md`. Référence humaine lisible, pas d'exécution IA
 
 Lequel ?
@@ -106,17 +106,17 @@ Lequel ?
 
 ### Étape 6 : Validation du nom skill
 
-**a. Format.** Valide le nom contre la regex Claude Code : `^[a-z0-9]+(-[a-z0-9]+)*$`, 1-64 caractères, pas de `--` consécutifs, pas de `-` au début ou à la fin.
+**a. Format.** Utilise un identifiant portable en kebab-case : `^[a-z0-9]+(-[a-z0-9]+)*$`, 1-64 caractères, pas de `--` consécutifs, pas de `-` au début ou à la fin.
 
 Si le nom proposé est invalide, propose une version corrigée (ex : « Post LinkedIn » → `post-linkedin`).
 
-**b. Collision avec une commande native.** Un skill qui porte le nom d'une commande intégrée de Claude Code ne se déclenchera jamais : la native gagne, et l'utilisateur croit que son skill est cassé. Refuse ces noms :
+**b. Collision avec une commande native.** Vérifie aussi les commandes intégrées de l'agent courant (Claude Code ou OpenCode). Évite les noms réservés ; la liste suivante couvre notamment les commandes natives Claude Code :
 
 `init`, `config`, `help`, `clear`, `compact`, `review`, `exit`, `quit`, `model`, `login`, `logout`, `cost`, `doctor`, `memory`, `agents`, `mcp`, `resume`, `status`, `statusline`, `vim`, `terminal-setup`, `bug`, `add-dir`, `permissions`, `hooks`, `export`, `rewind`, `usage`, `context`
 
 En cas de collision, propose une alternative explicite plutôt qu'une troncature : `init` → `initialisation`, `review` → `revue-hebdo`, `context` → `contexte-projet`.
 
-**c. Collision avec un skill existant.** Vérifie que `.claude/skills/[nom]/` n'existe pas déjà. Si oui, demande à l'utilisateur s'il veut modifier l'existant ou en créer un nouveau sous un autre nom. Ne l'écrase jamais sans poser la question.
+**c. Collision avec un skill existant.** Vérifie que `.claude/skills/[nom]/` et `.opencode/skills/[nom]/` n'existent pas déjà. Si un skill de même identifiant existe, demande à l'utilisateur s'il veut modifier l'existant ou en créer un nouveau sous un autre nom. Ne l'écrase jamais sans poser la question.
 
 ### Étape 7 : Génération
 
@@ -271,7 +271,7 @@ Si l'utilisateur accepte, lance une exécution test avec un input qu'il te donne
 
 - Créer un skill sans exemples concrets (Étape 3 obligatoire)
 - Générer un skill « bonnes pratiques internet » sans la méthode de l'utilisateur
-- Créer ailleurs que dans `.claude/skills/[nom]/SKILL.md` (c'est le seul emplacement lu par ce vault)
+- Pour un skill partagé, créer dans `.claude/skills/[nom]/SKILL.md` ; OpenCode détecte aussi cet emplacement. N'utiliser `.opencode/skills/` que pour un skill OpenCode spécifique ou une variante propre à OpenCode.
 - Oublier les wikilinks croisés fiche ↔ skill
 - Lancer Firecrawl de toi-même : seulement si l'utilisateur cite explicitement une méthode externe
 - Écrire la frontmatter avec `allowed-tools` (non reconnu pour les skills, sera ignoré)
